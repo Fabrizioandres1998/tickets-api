@@ -7,6 +7,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema mydb
 -- -----------------------------------------------------
+DROP SCHEMA IF EXISTS `mydb` ;
 
 -- -----------------------------------------------------
 -- Schema mydb
@@ -31,10 +32,12 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Usuarios` (
   `verification_token` VARCHAR(45) NULL,
   `reset_password_token` VARCHAR(45) NULL,
   `reset_password_expires` VARCHAR(45) NULL,
-  PRIMARY KEY (`id_user`),
-  UNIQUE INDEX `email_UNIQUE` (`lastname` ASC),
-  UNIQUE INDEX `username_UNIQUE` (`name` ASC))
+  PRIMARY KEY (`id_user`))
 ENGINE = InnoDB;
+
+CREATE UNIQUE INDEX `email_UNIQUE` ON `mydb`.`Usuarios` (`lastname` ASC) VISIBLE;
+
+CREATE UNIQUE INDEX `username_UNIQUE` ON `mydb`.`Usuarios` (`name` ASC) VISIBLE;
 
 
 -- -----------------------------------------------------
@@ -57,14 +60,16 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Eventos` (
   `state` VARCHAR(45) NULL,
   `id_user` INT NOT NULL,
   PRIMARY KEY (`id_event`),
-  UNIQUE INDEX `id_event_UNIQUE` (`id_event` ASC),
-  INDEX `fk_Eventos_Usuarios_idx` (`id_user` ASC),
   CONSTRAINT `fk_Eventos_Usuarios`
     FOREIGN KEY (`id_user`)
     REFERENCES `mydb`.`Usuarios` (`id_user`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
+
+CREATE UNIQUE INDEX `id_event_UNIQUE` ON `mydb`.`Eventos` (`id_event` ASC) VISIBLE;
+
+CREATE INDEX `fk_Eventos_Usuarios_idx` ON `mydb`.`Eventos` (`id_user` ASC) VISIBLE;
 
 
 -- -----------------------------------------------------
@@ -77,9 +82,6 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Tickets` (
   `id_event` INT NOT NULL,
   `id_user` INT NOT NULL,
   PRIMARY KEY (`id_tickets`, `id_user`),
-  UNIQUE INDEX `tickets_id_UNIQUE` (`id_tickets` ASC),
-  INDEX `fk_Tickets_Eventos1_idx` (`id_event` ASC),
-  INDEX `fk_Tickets_Usuarios1_idx` (`id_user` ASC),
   CONSTRAINT `fk_Tickets_Eventos1`
     FOREIGN KEY (`id_event`)
     REFERENCES `mydb`.`Eventos` (`id_event`)
@@ -91,6 +93,12 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Tickets` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
+
+CREATE UNIQUE INDEX `tickets_id_UNIQUE` ON `mydb`.`Tickets` (`id_tickets` ASC) VISIBLE;
+
+CREATE INDEX `fk_Tickets_Eventos1_idx` ON `mydb`.`Tickets` (`id_event` ASC) VISIBLE;
+
+CREATE INDEX `fk_Tickets_Usuarios1_idx` ON `mydb`.`Tickets` (`id_user` ASC) VISIBLE;
 
 
 -- -----------------------------------------------------
@@ -104,8 +112,6 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Compras` (
   `Eventos_id_event` INT NOT NULL,
   `Usuarios_id_user` INT NOT NULL,
   PRIMARY KEY (`id_purchase`),
-  INDEX `fk_Compras_Eventos1_idx` (`Eventos_id_event` ASC),
-  INDEX `fk_Compras_Usuarios1_idx` (`Usuarios_id_user` ASC),
   CONSTRAINT `fk_Compras_Eventos1`
     FOREIGN KEY (`Eventos_id_event`)
     REFERENCES `mydb`.`Eventos` (`id_event`)
@@ -118,6 +124,10 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Compras` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+CREATE INDEX `fk_Compras_Eventos1_idx` ON `mydb`.`Compras` (`Eventos_id_event` ASC) VISIBLE;
+
+CREATE INDEX `fk_Compras_Usuarios1_idx` ON `mydb`.`Compras` (`Usuarios_id_user` ASC) VISIBLE;
+
 
 -- -----------------------------------------------------
 -- Table `mydb`.`Historial`
@@ -128,8 +138,6 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Historial` (
   `id_event` INT NOT NULL,
   `id_user` INT NOT NULL,
   PRIMARY KEY (`id_history`),
-  INDEX `fk_Historial_Eventos1_idx` (`id_event` ASC),
-  INDEX `fk_Historial_Usuarios1_idx` (`id_user` ASC),
   CONSTRAINT `fk_Historial_Eventos1`
     FOREIGN KEY (`id_event`)
     REFERENCES `mydb`.`Eventos` (`id_event`)
@@ -141,6 +149,10 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Historial` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
+
+CREATE INDEX `fk_Historial_Eventos1_idx` ON `mydb`.`Historial` (`id_event` ASC) VISIBLE;
+
+CREATE INDEX `fk_Historial_Usuarios1_idx` ON `mydb`.`Historial` (`id_user` ASC) VISIBLE;
 
 USE `mydb` ;
 
